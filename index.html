@@ -8,11 +8,13 @@
 <meta name="theme-color" content="#07070d" />
 <title>AS SYSTEMS — برامج وحلول ذكية</title>
 
+<link rel="icon" type="image/png" href="logo.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="stylesheet" href="styles.css?v=5" />
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -22,15 +24,18 @@
   #preloader{position:fixed;inset:0;z-index:9999;background:#07070d;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
   #preloader.hidden{opacity:0;visibility:hidden}
   .loader-logo{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#eef0f7;display:flex;align-items:center;gap:12px}
-  .loader-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#06b6d4);display:grid;place-items:center;color:#fff;font-size:16px;animation:loadPulse 1.5s ease-in-out infinite}
-  @keyframes loadPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(37,99,235,.4)}50%{transform:scale(1.05);box-shadow:0 0 0 15px rgba(37,99,235,0)}}
+  .loader-mark{width:48px;height:48px;border-radius:12px;overflow:hidden;display:grid;place-items:center;animation:loadPulse 1.5s ease-in-out infinite}
+  .loader-mark img{width:100%;height:100%;object-fit:contain}
+  @keyframes loadPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(37,99,235,.4))}50%{transform:scale(1.05);filter:drop-shadow(0 0 20px rgba(37,99,235,.6))}}
 </style>
 </head>
 <body>
 
 <div id="preloader">
   <div class="loader-logo">
-    <span class="loader-mark">AS</span>
+    <span class="loader-mark">
+      <img src="logo.png" alt="AS SYSTEMS" />
+    </span>
     <span>SYSTEMS</span>
   </div>
 </div>
@@ -38,7 +43,7 @@
 <header class="nav" id="nav">
   <div class="nav-inner">
     <a href="#" class="logo">
-      <span class="logo-mark">AS</span>
+      <img src="logo.png" alt="AS SYSTEMS" class="logo-img" />
       <span class="logo-text">SYSTEMS</span>
     </a>
     <nav class="nav-links">
@@ -83,10 +88,6 @@
       <div class="stat">
         <div class="stat-num" id="statDownloads">0</div>
         <div class="stat-lbl">تحميل</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">100%</div>
-        <div class="stat-lbl">مجاني</div>
       </div>
     </div>
   </div>
@@ -191,7 +192,7 @@
 <footer>
   <div class="footer-inner">
     <div class="logo">
-      <span class="logo-mark">AS</span>
+      <img src="logo.png" alt="AS SYSTEMS" class="logo-img" />
       <span class="logo-text">SYSTEMS</span>
     </div>
     <p>© <span id="year"></span> AS SYSTEMS — جميع الحقوق محفوظة</p>
@@ -245,7 +246,7 @@
   </div>
 </div>
 
-<script src="script.js?v=4"></script>
+<script src="script.js?v=5"></script>
 
 <script>
   window.addEventListener('load', function() {
