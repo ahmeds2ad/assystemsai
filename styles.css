@@ -45,8 +45,20 @@ img{max-width:100%;display:block}
 @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-40px)}}
 .hero-content{position:relative;text-align:center;max-width:820px;z-index:2;animation:fadeUp 1s var(--ease) both}
 .hero h1{font-size:clamp(38px,7.5vw,78px);font-weight:900;line-height:1.15;letter-spacing:-2px;margin-bottom:24px}
-.grad{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 50%,var(--accent-3) 100%);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradShift 6s ease infinite;display:inline-block}
-@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* النص المعدني ثلاثي الأبعاد (نفس ستايل اللوجو) */
+.grad-3d {
+  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif;
+  background: linear-gradient(180deg, #ffffff 0%, #d1d5db 40%, #06b6d4 60%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0px 4px 15px rgba(6, 182, 212, 0.3);
+  position: relative;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
 .hero-sub{font-size:clamp(15px,1.8vw,19px);color:var(--muted);max-width:620px;margin:0 auto 40px;line-height:1.85}
 .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
 .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 32px;border-radius:100px;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer;border:none;transition:.35s var(--ease);white-space:nowrap}

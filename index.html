@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=6" />
+<link rel="stylesheet" href="styles.css?v=8" />
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -67,7 +67,7 @@
     <h1>
       مرحباً بك في
       <br>
-      <span class="grad">AS SYSTEMS</span>
+      <span class="grad-3d">AS SYSTEMS</span>
     </h1>
     <p class="hero-sub">
       منصة متخصصة في نشر البرامج والتطبيقات الذكية،
@@ -158,7 +158,7 @@
       <div class="logo-showcase">
         <div class="logo-glow"></div>
         <div class="logo-rings"></div>
-        <img src="logo.png" alt="AS SYSTEMS" class="logo-big" />
+        <img src="logo-full.png" alt="AS SYSTEMS" class="logo-big" />
       </div>
     </div>
   </div>
@@ -192,13 +192,9 @@
 <div class="modal-overlay" id="downloadModal">
   <div class="modal-box">
     <button class="modal-close" id="modalClose" aria-label="إغلاق">✕</button>
-
     <div class="modal-icon">📥</div>
     <h3 class="modal-title">قبل التحميل</h3>
-    <p class="modal-sub">
-      الرجاء إدخال معلوماتك لتحميل <strong id="modalAppName"></strong>
-    </p>
-
+    <p class="modal-sub">الرجاء إدخال معلوماتك لتحميل <strong id="modalAppName"></strong></p>
     <form id="downloadForm" class="modal-form">
       <div class="form-group">
         <label for="userName">الاسم الكامل *</label>
@@ -214,17 +210,9 @@
       </div>
       <button type="submit" class="btn btn-primary modal-submit" id="modalSubmit">
         <span>تأكيد التحميل</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
       </button>
-      <p class="modal-privacy">
-        🔒 معلوماتك محفوظة ولا تُستخدم إلا للتواصل معك بخصوص التحديثات
-      </p>
+      <p class="modal-privacy">🔒 معلوماتك محفوظة ولا تُستخدم إلا للتواصل معك بخصوص التحديثات</p>
     </form>
-
     <div class="modal-success" id="modalSuccess">
       <div class="success-icon">✅</div>
       <h3>شكراً لك!</h3>
