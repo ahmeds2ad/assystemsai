@@ -1,417 +1,253 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AS SYSTEMS AI — حلول برمجية ذكية</title>
-<meta name="description" content="AS SYSTEMS AI — شركة حلول برمجية عراقية تطور أنظمة إدارة متخصصة للأعمال والعيادات والمؤسسات.">
-<meta property="og:title" content="AS SYSTEMS AI">
-<meta property="og:description" content="حلول برمجية ذكية لإدارة أعمالك">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://ahmeds2ad.github.io/assystemsai/">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="AS SYSTEMS — منصة نشر البرامج والتطبيقات الذكية من تطوير أحمد سعد كشيش" />
+<meta name="keywords" content="AS SYSTEMS, أحمد سعد كشيش, برامج, تطبيقات, ذكاء اصطناعي" />
+<meta name="theme-color" content="#07070d" />
+<title>AS SYSTEMS — برامج وحلول ذكية</title>
+
+<!-- أيقونة المتصفح (اللوجو المربع) -->
+<link rel="icon" type="image/png" href="logo.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=9" />
 
 <style>
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #f4f6f9;
-    color: #1f2937;
-    line-height: 1.7;
-}
-
-nav {
-    background: #0b3d91;
-    padding: 14px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.logo {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 22px;
-    margin: 0;
-    padding: 0;
-    flex-wrap: wrap;
-}
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 15px;
-    position: relative;
-    padding-bottom: 5px;
-}
-
-nav ul li a::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    background: white;
-    transition: 0.3s;
-}
-
-nav ul li a:hover::after { width: 100%; }
-
-.hero {
-    background: linear-gradient(135deg, #0b3d91 0%, #062a66 100%);
-    color: white;
-    text-align: center;
-    padding: 80px 20px 70px;
-}
-
-.hero h1 {
-    margin: 0 0 14px;
-    font-size: 36px;
-    line-height: 1.3;
-}
-
-.hero p {
-    margin: 0 auto 28px;
-    font-size: 18px;
-    max-width: 720px;
-    opacity: 0.95;
-}
-
-.hero-btns {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn {
-    display: inline-block;
-    padding: 12px 26px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    transition: 0.25s;
-}
-
-.btn-primary { background: white; color: #0b3d91; }
-.btn-primary:hover { background: #e5edff; }
-
-.btn-outline {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-}
-.btn-outline:hover { background: white; color: #0b3d91; }
-
-.section {
-    padding: 60px 20px;
-    max-width: 1050px;
-    margin: auto;
-}
-
-.section h2 {
-    text-align: center;
-    margin-bottom: 36px;
-    font-size: 26px;
-    color: #0b3d91;
-}
-
-/* بطاقات المنتجات */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 22px;
-}
-
-.program-card {
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
-    display: flex;
-    flex-direction: column;
-    transition: 0.25s;
-}
-
-.program-card:hover {
-    box-shadow: 0 8px 24px rgba(11,61,145,0.15);
-    transform: translateY(-2px);
-}
-
-.program-card .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    font-size: 12px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.badge-available { background: #dcfce7; color: #166534; }
-.badge-soon { background: #fef3c7; color: #92400e; }
-.badge-dev { background: #dbeafe; color: #1e40af; }
-
-.program-card h3 {
-    margin: 0 0 8px;
-    font-size: 20px;
-    color: #0b3d91;
-}
-
-.program-card p {
-    margin: 0 0 16px;
-    font-size: 15px;
-    color: #4b5563;
-    flex-grow: 1;
-}
-
-.program-card .sector {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 12px;
-}
-
-.program-card .card-btns {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.program-card .card-btns a {
-    flex: 1;
-    text-align: center;
-    padding: 9px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: 0.2s;
-    min-width: 90px;
-}
-
-.card-btns .btn-details {
-    background: #eef2ff;
-    color: #0b3d91;
-}
-.card-btns .btn-details:hover { background: #dbe4ff; }
-
-.card-btns .btn-download {
-    background: #0b3d91;
-    color: white;
-}
-.card-btns .btn-download:hover { background: #062a66; }
-
-/* قسم لماذا نحن */
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 18px;
-}
-
-.feature {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    border-right: 4px solid #0b3d91;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.feature h4 {
-    margin: 0 0 6px;
-    color: #0b3d91;
-    font-size: 16px;
-}
-
-.feature p {
-    margin: 0;
-    font-size: 14px;
-    color: #4b5563;
-}
-
-/* CTA */
-.cta-section {
-    background: linear-gradient(135deg, #0b3d91 0%, #062a66 100%);
-    color: white;
-    text-align: center;
-    padding: 60px 20px;
-    margin-top: 20px;
-}
-
-.cta-section h2 {
-    color: white;
-    margin-bottom: 12px;
-}
-
-.cta-section p {
-    margin: 0 auto 26px;
-    max-width: 620px;
-    font-size: 16px;
-    opacity: 0.95;
-}
-
-/* Footer */
-footer {
-    background: #111827;
-    color: #cbd5e1;
-    padding: 40px 20px 20px;
-    text-align: center;
-    font-size: 14px;
-}
-
-footer .footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 22px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-}
-
-footer .footer-links a {
-    color: #93c5fd;
-    text-decoration: none;
-}
-
-footer .footer-links a:hover { text-decoration: underline; }
-
-footer .copyright {
-    border-top: 1px solid #1f2937;
-    padding-top: 16px;
-    margin-top: 16px;
-    font-size: 13px;
-    color: #94a3b8;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-    nav { padding: 12px 16px; }
-    nav ul { gap: 14px; }
-    .hero { padding: 55px 16px 45px; }
-    .hero h1 { font-size: 26px; }
-    .hero p { font-size: 16px; }
-    .section { padding: 40px 16px; }
-    .section h2 { font-size: 22px; }
-}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#07070d;color:#eef0f7;font-family:'Tajawal',system-ui,sans-serif;overflow-x:hidden}
+  body{opacity:0;transition:opacity .3s ease}
+  body.loaded{opacity:1}
+  #preloader{position:fixed;inset:0;z-index:9999;background:#07070d;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
+  #preloader.hidden{opacity:0;visibility:hidden}
+  .loader-logo{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#eef0f7;display:flex;align-items:center;gap:12px}
+  .loader-mark{width:48px;height:48px;border-radius:12px;overflow:hidden;display:grid;place-items:center;animation:loadPulse 1.5s ease-in-out infinite}
+  .loader-mark img{width:100%;height:100%;object-fit:contain}
+  @keyframes loadPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(37,99,235,.4))}50%{transform:scale(1.05);filter:drop-shadow(0 0 20px rgba(37,99,235,.6))}}
 </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo">AS SYSTEMS AI</div>
-    <ul>
-        <li><a href="#programs">البرامج</a></li>
-        <li><a href="#why">لماذا نحن</a></li>
-        <li><a href="#about">من نحن</a></li>
-        <li><a href="#contact">تواصل</a></li>
-    </ul>
-</nav>
-
-<div class="hero">
-    <h1>حلول برمجية ذكية لإدارة أعمالك</h1>
-    <p>AS SYSTEMS AI تطور أنظمة إدارة متخصصة للأعمال والعيادات والمؤسسات — بتصميم عربي وواجهة سهلة.</p>
-    <div class="hero-btns">
-        <a href="#programs" class="btn btn-primary">استكشف البرامج</a>
-        <a href="#contact" class="btn btn-outline">اطلب برنامجاً خاصاً</a>
-    </div>
+<div id="preloader">
+  <div class="loader-logo">
+    <span class="loader-mark">
+      <img src="logo.png" alt="AS SYSTEMS" /> <!-- المربع -->
+    </span>
+    <span>SYSTEMS</span>
+  </div>
 </div>
 
-<!-- البرامج -->
-<div class="section" id="programs">
-    <h2>منتجاتنا</h2>
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="logo.png" alt="AS SYSTEMS" class="logo-img" /> <!-- المربع -->
+      <span class="logo-text">SYSTEMS</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#apps">البرامج</a>
+      <a href="#about">من نحن</a>
+      <a href="#contact">تواصل</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="القائمة">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-    <div class="products-grid">
-
-        <div class="program-card">
-            <span class="badge badge-available">متوفر</span>
-            <h3>TMS</h3>
-            <p>نظام لإدارة وتثبيت حركة الأفراد تقنياً وبذكاء.</p>
-            <div class="sector">📂 القطاع: إدارة الأفراد</div>
-            <div class="card-btns">
-                <a href="tms.html" class="btn-details">التفاصيل</a>
-                <a href="https://github.com/ahmeds2ad/assystemsai/releases/download/v1.0/TMS-Setup-1.0.0.exe" class="btn-download">تحميل</a>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- لماذا نحن -->
-<div class="section" id="why">
-    <h2>لماذا AS SYSTEMS AI؟</h2>
-
-    <div class="features-grid">
-        <div class="feature">
-            <h4>تصميم عربي و RTL</h4>
-            <p>واجهات مبنية من الأساس بالعربية، وليست ترجمة.</p>
-        </div>
-        <div class="feature">
-            <h4>مناسب للسوق العراقي</h4>
-            <p>حلول مصممة لاحتياجات المؤسسات المحلية.</p>
-        </div>
-        <div class="feature">
-            <h4>سهل الاستخدام</h4>
-            <p>واجهة بسيطة لا تحتاج تدريباً طويلاً.</p>
-        </div>
-        <div class="feature">
-            <h4>نسخ احتياطي للبيانات</h4>
-            <p>حماية بياناتك من الفقدان.</p>
-        </div>
-        <div class="feature">
-            <h4>دعم وتحديثات</h4>
-            <p>تحديثات دورية ودعم فني مباشر.</p>
-        </div>
-        <div class="feature">
-            <h4>تطوير مدعوم بالذكاء الاصطناعي</h4>
-            <p>نستخدم أدوات حديثة لتسريع التطوير.</p>
-        </div>
-    </div>
-</div>
-
-<!-- CTA -->
-<div class="cta-section">
-    <h2>هل تحتاج برنامجاً خاصاً بعملك؟</h2>
-    <p>نطور لك نظاماً مخصصاً حسب طبيعة عملك — تواصل معنا لمناقشة الفكرة.</p>
-    <a href="mailto:ahmedalmutadareb0@gmail.com" class="btn btn-primary">تواصل معنا</a>
-</div>
-
-<!-- من نحن -->
-<div class="section" id="about">
-    <h2>من نحن</h2>
-    <p style="text-align:center; max-width:720px; margin:auto; font-size:16px; color:#4b5563;">
-        AS SYSTEMS AI شركة حلول برمجية متخصصة في تطوير أنظمة إدارة للأعمال والعيادات والمؤسسات،
-        بتركيز على البساطة، الاعتمادية، ودعم اللغة العربية بشكل كامل.
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-lines"></div>
+  </div>
+  <div class="hero-content">
+    <h1>
+      مرحباً بك في
+      <br>
+      <!-- اللوجو المستطيل هنا -->
+      <img src="logo-full.png" alt="AS SYSTEMS" class="hero-logo-img" />
+    </h1>
+    <p class="hero-sub">
+      منصة متخصصة في نشر البرامج والتطبيقات الذكية،
+      بتصميم عصري وحلول عملية تبسّط العمل وترفع الكفاءة.
     </p>
-</div>
+    <div class="hero-actions">
+      <a href="#apps" class="btn btn-primary">
+        استعرض البرامج
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+      <a href="#contact" class="btn btn-ghost">تواصل معنا</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="statApps">0</div>
+        <div class="stat-lbl">برنامج</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="statDownloads">0</div>
+        <div class="stat-lbl">تحميل</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span></span></div>
+</section>
 
-<!-- تواصل -->
-<div class="section" id="contact">
-    <h2>تواصل معنا</h2>
-    <p style="text-align:center; font-size:16px;">
-        📧 <a href="mailto:ahmedalmutadareb0@gmail.com" style="color:#0b3d91; font-weight:600;">ahmedalmutadareb0@gmail.com</a>
-    </p>
-</div>
+<section class="section" id="apps">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">— معرض البرامج</div>
+      <h2>البرامج المتوفرة</h2>
+      <p class="section-desc">حمّل أحدث إصدارات برامجنا مباشرة بضغطة واحدة</p>
+    </div>
+    <div class="search-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input id="search" type="text" placeholder="ابحث عن برنامج..." />
+    </div>
+  </div>
+  <div id="appsGrid" class="grid">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+</section>
+
+<section class="section section-alt" id="about">
+  <div class="about-grid">
+    <div class="about-text">
+      <div class="eyebrow">— من نحن</div>
+      <h2>حلول ذكية، بأداء احترافي</h2>
+      <p>
+        <strong>AS SYSTEMS</strong> منصة متخصصة في نشر البرامج والتطبيقات والحلول الرقمية
+        بشكل بسيط واحترافي، تم تطويرها وإدارتها من قبل
+        <strong>أحمد سعد كشيش</strong>.
+      </p>
+      <p>
+        نهدف إلى نشر البرامج التي تم تطويرها وتحسينها بالاعتماد على الخبرة الشخصية
+        والاستفادة من أدوات وتقنيات الذكاء الاصطناعي الحديثة، لتقديم حلول عملية
+        ومبتكرة تسهم في تبسيط العمل ورفع الكفاءة وتلبية احتياجات المستخدمين.
+      </p>
+      <div class="about-features">
+        <div class="feat">
+          <div class="feat-ico">🤖</div>
+          <div>
+            <div class="feat-t">مدعوم بالذكاء الاصطناعي</div>
+            <div class="feat-d">تقنيات حديثة بأداء عالي</div>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico">⚡</div>
+          <div>
+            <div class="feat-t">سريع وخفيف</div>
+            <div class="feat-d">برامج مصممة للسرعة</div>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico">🛡️</div>
+          <div>
+            <div class="feat-t">آمن وموثوق</div>
+            <div class="feat-d">تحديثات منتظمة ومستقرة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="logo-showcase">
+        <div class="logo-glow"></div>
+        <div class="logo-rings"></div>
+        <!-- اللوجو المستطيل المتحرك -->
+        <img src="logo-full.png" alt="AS SYSTEMS" class="logo-big" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="contact-box">
+    <div class="eyebrow">— تواصل معنا</div>
+    <h2>عندك سؤال أو تريد برنامج مخصص؟</h2>
+    <p class="section-desc">راسلنا وراح نرد عليك بأسرع وقت ممكن</p>
+    <div class="contact-actions">
+      <a href="mailto:assystemsai@gmail.com" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+        assystemsai@gmail.com
+      </a>
+    </div>
+  </div>
+</section>
 
 <footer>
-    <div class="footer-links">
-        <a href="#programs">البرامج</a>
-        <a href="#about">من نحن</a>
-        <a href="#contact">تواصل</a>
+  <div class="footer-inner">
+    <div class="logo">
+      <img src="logo.png" alt="AS SYSTEMS" class="logo-img" /> <!-- المربع -->
+      <span class="logo-text">SYSTEMS</span>
     </div>
-    <div class="copyright">
-        © 2026 AS SYSTEMS AI — تطوير: أحمد سعد كشيش
+    
+    <!-- 🔲 الباركود الجديد هنا 🔲 -->
+    <div class="footer-qr">
+      <img src="qr-code.png" alt="Scan to open on mobile" />
+      <p>امسح الباركود لفتح الموقع على هاتفك</p>
     </div>
+
+    <p>© <span id="year"></span> AS SYSTEMS — جميع الحقوق محفوظة</p>
+    <p class="footer-credit">صُنع بواسطة أحمد سعد كشيش</p>
+  </div>
 </footer>
 
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="إغلاق">✕</button>
+    <div class="modal-icon">📥</div>
+    <h3 class="modal-title">قبل التحميل</h3>
+    <p class="modal-sub">الرجاء إدخال معلوماتك لتحميل <strong id="modalAppName"></strong></p>
+    <form id="downloadForm" class="modal-form">
+      <div class="form-group">
+        <label for="userName">الاسم الكامل *</label>
+        <input type="text" id="userName" required placeholder="مثال: أحمد محمد" />
+      </div>
+      <div class="form-group">
+        <label for="userOrg">المؤسسة / جهة العمل *</label>
+        <input type="text" id="userOrg" required placeholder="مثال: شركة النور" />
+      </div>
+      <div class="form-group">
+        <label for="userEmail">البريد الإلكتروني *</label>
+        <input type="email" id="userEmail" required placeholder="you@example.com" />
+      </div>
+      <button type="submit" class="btn btn-primary modal-submit" id="modalSubmit">
+        <span>تأكيد التحميل</span>
+      </button>
+      <p class="modal-privacy">🔒 معلوماتك محفوظة ولا تُستخدم إلا للتواصل معك بخصوص التحديثات</p>
+    </form>
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-icon">✅</div>
+      <h3>شكراً لك!</h3>
+      <p>تم تسجيل بياناتك بنجاح</p>
+      <p class="small">سيبدأ التحميل تلقائياً...</p>
+      <a href="#" id="modalDownloadLink" class="btn btn-primary">التحميل الآن</a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js?v=5"></script>
+
+<script>
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var p = document.getElementById('preloader');
+      if (p) p.classList.add('hidden');
+      document.body.classList.add('loaded');
+    }, 200);
+  });
+  setTimeout(function() {
+    var p = document.getElementById('preloader');
+    if (p) p.classList.add('hidden');
+    document.body.classList.add('loaded');
+  }, 3000);
+</script>
 </body>
 </html>
