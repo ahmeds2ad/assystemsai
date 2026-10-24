@@ -1,6 +1,6 @@
 const APPS_URL = 'apps.json';
 const GITHUB_USER = 'ahmeds2ad';
-const GITHUB_REPO = 'as-site';
+const GITHUB_REPO = 'assystemsai'; // ✅ تم تصحيح اسم المستودع هنا
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9SrmIMqPBs2FzyCzU8HQdHeuTVPkYNRLq59--AaHYU4b-vAVNSSdql2-FwFeN9GXY/exec';
 
 const grid = document.getElementById('appsGrid');
