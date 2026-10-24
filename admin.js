@@ -7,9 +7,35 @@ let currentData = null;
 let currentSha = null;
 let githubToken = '';
 
+/* ================== دوال آمنة (تتجنب أخطاء null) ================== */
+function getVal(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val || '';
+}
+function getChecked(id) {
+  const el = document.getElementById(id);
+  return el ? el.checked : false;
+}
+function getFile(id) {
+  const el = document.getElementById(id);
+  return (el && el.files) ? el.files[0] : null;
+}
+function show(id, displayType = 'block') {
+  const el = document.getElementById(id);
+  if (el) el.style.display = displayType;
+}
+function setText(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = txt;
+}
+
 /* ================== الدخول ================== */
 async function login() {
-  const token = document.getElementById('tokenInput').value.trim();
+  const token = getVal('tokenInput');
   if (!token) return;
 
   try {
@@ -20,18 +46,17 @@ async function login() {
 
     githubToken = token;
     sessionStorage.setItem('gh_token', token);
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
+    show('loginScreen', 'none');
+    show('dashboard', 'block');
     loadApps();
   } catch (e) {
-    document.getElementById('loginError').style.display = 'block';
+    show('loginError', 'block');
   }
 }
 
 /* ================== جلب التطبيقات ================== */
 async function loadApps() {
-  const listDiv = document.getElementById('appList');
-  listDiv.innerHTML = 'جاري التحميل...';
+  setText('appList', 'جاري التحميل...');
 
   try {
     const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${GITHUB_BRANCH}`, {
@@ -45,13 +70,15 @@ async function loadApps() {
 
     renderAppList();
   } catch (e) {
-    listDiv.innerHTML = '❌ خطأ في جلب البيانات. تأكد من التوكن والفرع.';
+    setText('appList', '❌ خطأ في جلب البيانات. تأكد من التوكن والفرع.');
   }
 }
 
 /* ================== عرض القائمة ================== */
 function renderAppList() {
   const listDiv = document.getElementById('appList');
+  if (!listDiv) return;
+
   if (!currentData.apps || currentData.apps.length === 0) {
     listDiv.innerHTML = '<p>لا توجد تطبيقات حالياً.</p>';
     return;
@@ -82,68 +109,67 @@ function renderAppList() {
 
 /* ================== إظهار/إخفاء النموذج ================== */
 function showForm() {
-  document.getElementById('appForm').style.display = 'block';
-  document.getElementById('formTitle').innerText = 'إضافة تطبيق جديد';
-  document.getElementById('appIndex').value = '-1';
-  document.getElementById('progressContainer').style.display = 'none';
+  show('appForm', 'block');
+  setText('formTitle', 'إضافة تطبيق جديد');
+  setVal('appIndex', '-1');
+  show('progressContainer', 'none');
   clearForm();
 }
 
 function hideForm() {
-  document.getElementById('appForm').style.display = 'none';
+  show('appForm', 'none');
 }
 
 function clearForm() {
-  document.getElementById('appName').value = '';
-  document.getElementById('appVersion').value = '';
-  document.getElementById('appDesc').value = '';
-  document.getElementById('appIcon').value = '';
-  document.getElementById('appTags').value = '';
-  document.getElementById('appHashtags').value = '';
-  document.getElementById('appKeywords').value = '';
-  document.getElementById('appFeatured').checked = true;
-  document.getElementById('appUrl').value = '';
-  document.getElementById('appFile').value = '';
-  document.getElementById('appUrlAndroid').value = '';
-  document.getElementById('appFileAndroid').value = '';
+  setVal('appName', '');
+  setVal('appVersion', '');
+  setVal('appDesc', '');
+  setVal('appIcon', '');
+  setVal('appTags', '');
+  setVal('appHashtags', '');
+  setVal('appKeywords', '');
+  const feat = document.getElementById('appFeatured');
+  if (feat) feat.checked = true;
+  setVal('appUrl', '');
+  setVal('appFile', '');
+  setVal('appUrlAndroid', '');
+  setVal('appFileAndroid', '');
 }
 
 /* ================== تعديل تطبيق ================== */
 function editApp(index) {
   const app = currentData.apps[index];
-  document.getElementById('appForm').style.display = 'block';
-  document.getElementById('formTitle').innerText = 'تعديل التطبيق';
-  document.getElementById('appIndex').value = index;
-  document.getElementById('progressContainer').style.display = 'none';
+  show('appForm', 'block');
+  setText('formTitle', 'تعديل التطبيق');
+  setVal('appIndex', index);
+  show('progressContainer', 'none');
   
-  document.getElementById('appName').value = app.name;
-  document.getElementById('appVersion').value = app.version;
-  document.getElementById('appDesc').value = app.description || '';
-  document.getElementById('appIcon').value = app.icon || '';
-  document.getElementById('appTags').value = (app.tags || []).join(', ');
-  document.getElementById('appHashtags').value = (app.hashtags || []).join(', ');
-  document.getElementById('appKeywords').value = app.keywords || '';
-  document.getElementById('appFeatured').checked = app.featured || false;
+  setVal('appName', app.name);
+  setVal('appVersion', app.version);
+  setVal('appDesc', app.description || '');
+  setVal('appIcon', app.icon || '');
+  setVal('appTags', (app.tags || []).join(', '));
+  setVal('appHashtags', (app.hashtags || []).join(', '));
+  setVal('appKeywords', app.keywords || '');
+  const feat = document.getElementById('appFeatured');
+  if (feat) feat.checked = app.featured || false;
 
   // منصة Windows
   const winPlatform = (app.platforms || []).find(p => p.os === 'Windows');
-  document.getElementById('appUrl').value = winPlatform?.url || '';
-  document.getElementById('appFile').value = '';
+  setVal('appUrl', winPlatform?.url || '');
+  setVal('appFile', '');
 
   // منصة Android
   const androidPlatform = (app.platforms || []).find(p => p.os === 'Android');
-  document.getElementById('appUrlAndroid').value = androidPlatform?.url || '';
-  document.getElementById('appFileAndroid').value = '';
+  setVal('appUrlAndroid', androidPlatform?.url || '');
+  setVal('appFileAndroid', '');
 }
 
 /* ================== تحويل الملف إلى Base64 ================== */
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result.split(',')[1];
-      resolve(base64);
-    };
+    reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
@@ -161,18 +187,18 @@ function openGitHubReleaseForUpload(name, version, desc, platformType) {
 
 /* ================== حفظ التطبيق ================== */
 async function saveApp() {
-  const index = parseInt(document.getElementById('appIndex').value);
-  const name = document.getElementById('appName').value.trim();
-  const version = document.getElementById('appVersion').value.trim();
-  const desc = document.getElementById('appDesc').value.trim();
-  const icon = document.getElementById('appIcon').value.trim();
-  const tags = document.getElementById('appTags').value.split(',').map(t => t.trim()).filter(Boolean);
+  const index = parseInt(getVal('appIndex') || '-1');
+  const name = getVal('appName');
+  const version = getVal('appVersion');
+  const desc = getVal('appDesc');
+  const icon = getVal('appIcon');
+  const tags = getVal('appTags').split(',').map(t => t.trim()).filter(Boolean);
   
-  const rawHashtags = document.getElementById('appHashtags').value.split(',').map(h => h.trim()).filter(Boolean);
+  const rawHashtags = getVal('appHashtags').split(',').map(h => h.trim()).filter(Boolean);
   const hashtags = rawHashtags.map(h => h.startsWith('#') ? h : '#' + h);
   
-  const keywords = document.getElementById('appKeywords').value.split(',').map(k => k.trim()).filter(Boolean).join(', ');
-  const featured = document.getElementById('appFeatured').checked;
+  const keywords = getVal('appKeywords').split(',').map(k => k.trim()).filter(Boolean).join(', ');
+  const featured = getChecked('appFeatured');
 
   if (!name || !version) {
     alert('الرجاء إدخال اسم التطبيق والإصدار على الأقل.');
@@ -180,15 +206,13 @@ async function saveApp() {
   }
 
   const saveBtn = document.getElementById('saveBtn');
-  saveBtn.disabled = true;
-  saveBtn.innerText = 'جاري المعالجة...';
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.innerText = 'جاري المعالجة...'; }
 
   const platforms = [];
 
   /* ---------- معالجة Windows ---------- */
-  const manualUrl = document.getElementById('appUrl').value.trim();
-  const fileInput = document.getElementById('appFile');
-  const file = fileInput.files[0];
+  const manualUrl = getVal('appUrl');
+  const file = getFile('appFile');
 
   let winUrl = manualUrl;
   let winSize = 0;
@@ -197,21 +221,19 @@ async function saveApp() {
   if (file) {
     if (file.size > 25 * 1024 * 1024) {
       openGitHubReleaseForUpload(name, version, desc, 'Windows');
-      saveBtn.disabled = false;
-      saveBtn.innerText = '💾 حفظ ونشر';
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
       return;
     }
     try {
-      document.getElementById('progressContainer').style.display = 'block';
-      document.getElementById('statusText').innerText = 'جاري رفع ملف Windows...';
+      show('progressContainer', 'block');
+      setText('statusText', 'جاري رفع ملف Windows...');
       const r = await uploadFileToGitHub(file);
       winUrl = r.url;
       winSize = r.size;
       winFilename = r.name;
     } catch (e) {
       alert('حدث خطأ أثناء رفع ملف Windows: ' + e.message);
-      saveBtn.disabled = false;
-      saveBtn.innerText = '💾 حفظ ونشر';
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
       return;
     }
   }
@@ -220,154 +242,141 @@ async function saveApp() {
     platforms.push({ os: 'Windows', url: winUrl, size: winSize, filename: winFilename });
   }
 
-  /* ---------- معالجة Android ---------- */
-  const manualUrlAndroid = document.getElementById('appUrlAndroid').value.trim();
-  const fileAndroidInput = document.getElementById('appFileAndroid');
-  const fileAndroid = fileAndroidInput.files[0];
+  /* ---------- معالجة Android (فقط إذا الحقول موجودة) ---------- */
+  const hasAndroidField = document.getElementById('appUrlAndroid') !== null;
 
-  let androidUrl = manualUrlAndroid;
-  let androidSize = 0;
-  let androidFilename = manualUrlAndroid.split('/').pop() || '';
+  if (hasAndroidField) {
+    const manualUrlAndroid = getVal('appUrlAndroid');
+    const fileAndroid = getFile('appFileAndroid');
 
-  if (fileAndroid) {
-    if (fileAndroid.size > 25 * 1024 * 1024) {
-      openGitHubReleaseForUpload(name, version, desc, 'Android');
-      saveBtn.disabled = false;
-      saveBtn.innerText = '💾 حفظ ونشر';
-      return;
+    let androidUrl = manualUrlAndroid;
+    let androidSize = 0;
+    let androidFilename = manualUrlAndroid.split('/').pop() || '';
+
+    if (fileAndroid) {
+      if (fileAndroid.size > 25 * 1024 * 1024) {
+        openGitHubReleaseForUpload(name, version, desc, 'Android');
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
+        return;
+      }
+      try {
+        show('progressContainer', 'block');
+        setText('statusText', 'جاري رفع ملف Android...');
+        const r = await uploadFileToGitHub(fileAndroid);
+        androidUrl = r.url;
+        androidSize = r.size;
+        androidFilename = r.name;
+      } catch (e) {
+        alert('حدث خطأ أثناء رفع ملف Android: ' + e.message);
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
+        return;
+      }
     }
-    try {
-      document.getElementById('progressContainer').style.display = 'block';
-      document.getElementById('statusText').innerText = 'جاري رفع ملف Android...';
-      const r = await uploadFileToGitHub(fileAndroid);
-      androidUrl = r.url;
-      androidSize = r.size;
-      androidFilename = r.name;
-    } catch (e) {
-      alert('حدث خطأ أثناء رفع ملف Android: ' + e.message);
-      saveBtn.disabled = false;
-      saveBtn.innerText = '💾 حفظ ونشر';
-      return;
-    }
-  }
 
-  if (androidUrl) {
-    platforms.push({ os: 'Android', url: androidUrl, size: androidSize, filename: androidFilename });
+    if (androidUrl) {
+      platforms.push({ os: 'Android', url: androidUrl, size: androidSize, filename: androidFilename });
+    }
+  } else {
+    console.warn('⚠️ حقل Android غير موجود في HTML الحالي. تم تخطي Android.');
   }
 
   /* ---------- التحقق ---------- */
   if (platforms.length === 0) {
     alert('يجب عليك إضافة منصة واحدة على الأقل (Windows أو Android).');
-    saveBtn.disabled = false;
-    saveBtn.innerText = '💾 حفظ ونشر';
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
     return;
   }
 
   /* ---------- بناء كائن التطبيق ---------- */
   const newApp = {
-    name: name,
-    version: version,
-    description: desc,
-    icon: icon,
-    tags: tags,
-    hashtags: hashtags,
-    keywords: keywords,
-    platforms: platforms,
+    name, version, description: desc, icon,
+    tags, hashtags, keywords,
+    platforms,
     date: new Date().toISOString().split('T')[0],
-    featured: featured,
+    featured,
     releaseTag: "v" + version
   };
 
-  if (index === -1) {
-    currentData.apps.push(newApp);
-  } else {
-    currentData.apps[index] = newApp;
-  }
+  if (index === -1) currentData.apps.push(newApp);
+  else currentData.apps[index] = newApp;
 
   await pushToGitHub('تحديث بيانات التطبيقات - ' + name);
   
-  saveBtn.disabled = false;
-  saveBtn.innerText = '💾 حفظ ونشر';
+  if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '💾 حفظ ونشر'; }
   hideForm();
 }
 
-/* ================== رفع الملف (للملفات الصغيرة فقط) ================== */
+/* ================== رفع الملف (للملفات الصغيرة) ================== */
 async function uploadFileToGitHub(file) {
   const progressBar = document.getElementById('uploadProgress');
   const statusText = document.getElementById('statusText');
   
-  progressBar.value = 10;
-  statusText.innerText = 'جاري تحضير الملف...';
+  if (progressBar) progressBar.value = 10;
+  if (statusText) statusText.innerText = 'جاري تحضير الملف...';
 
+  const base64 = await fileToBase64(file);
+  if (progressBar) progressBar.value = 30;
+  if (statusText) statusText.innerText = 'جاري رفع الملف إلى GitHub...';
+
+  const path = `uploads/${file.name}`;
+
+  let sha = null;
   try {
-    const base64 = await fileToBase64(file);
-    progressBar.value = 30;
-    statusText.innerText = 'جاري رفع الملف إلى GitHub...';
-
-    const path = `uploads/${file.name}`;
-
-    // التحقق إذا كان الملف موجود مسبقاً للحصول على SHA
-    let sha = null;
-    try {
-      const checkRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
-        { headers: { 'Authorization': `Bearer ${githubToken}` } }
-      );
-      if (checkRes.ok) {
-        const existing = await checkRes.json();
-        sha = existing.sha;
-      }
-    } catch (e) {}
-
-    const body = {
-      message: `رفع ملف: ${file.name}`,
-      content: base64,
-      branch: GITHUB_BRANCH
-    };
-    if (sha) body.sha = sha;
-
-    progressBar.value = 50;
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${githubToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      }
+    const checkRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
+      { headers: { 'Authorization': `Bearer ${githubToken}` } }
     );
-
-    progressBar.value = 90;
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error('فشل الرفع: ' + errText);
+    if (checkRes.ok) {
+      const existing = await checkRes.json();
+      sha = existing.sha;
     }
+  } catch (e) {}
 
-    progressBar.value = 100;
-    statusText.innerText = '✅ تم الرفع بنجاح!';
+  const body = {
+    message: `رفع ملف: ${file.name}`,
+    content: base64,
+    branch: GITHUB_BRANCH
+  };
+  if (sha) body.sha = sha;
 
-    return {
-      url: `https://ahmeds2ad.github.io/assystemsai/${path}`,
-      size: file.size,
-      name: file.name
-    };
+  if (progressBar) progressBar.value = 50;
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${githubToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
 
-  } catch (err) {
-    throw err;
+  if (progressBar) progressBar.value = 90;
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error('فشل الرفع: ' + errText);
   }
+
+  if (progressBar) progressBar.value = 100;
+  if (statusText) statusText.innerText = '✅ تم الرفع بنجاح!';
+
+  return {
+    url: `https://ahmeds2ad.github.io/assystemsai/${path}`,
+    size: file.size,
+    name: file.name
+  };
 }
 
 /* ================== حذف تطبيق ================== */
 async function deleteApp(index) {
-  if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟ (لن يتم حذف الملفات نفسها من GitHub، فقط من القائمة)')) return;
+  if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
   currentData.apps.splice(index, 1);
   await pushToGitHub('حذف تطبيق');
 }
 
-/* ================== حفظ التغييرات في apps.json ================== */
+/* ================== حفظ apps.json ================== */
 async function pushToGitHub(commitMessage) {
   try {
     const jsonString = JSON.stringify(currentData, null, 2);
@@ -399,11 +408,24 @@ async function pushToGitHub(commitMessage) {
   }
 }
 
-/* ================== التحقق من الجلسة عند التحميل ================== */
+/* ================== التشخيص عند التحميل ================== */
 window.onload = () => {
+  const hasAndroid = !!document.getElementById('appUrlAndroid');
+  console.log('═══════════════════════════════════════');
+  console.log('🔍 تشخيص لوحة التحكم:');
+  console.log('   نسخة HTML:', hasAndroid ? '✅ جديدة (تدعم Android)' : '❌ قديمة (لا تدعم Android)');
+  console.log('   الملف:', window.location.href);
+  console.log('═══════════════════════════════════════');
+
+  if (!hasAndroid) {
+    console.warn('⚠️ تنبيه: ملف admin.html عندك لا يزال النسخة القديمة!');
+    console.warn('   لازم ترفع النسخة الجديدة من admin.html إلى GitHub.');
+  }
+
   const savedToken = sessionStorage.getItem('gh_token');
   if (savedToken) {
-    document.getElementById('tokenInput').value = savedToken;
+    const tokenInput = document.getElementById('tokenInput');
+    if (tokenInput) tokenInput.value = savedToken;
     login();
   }
 };
