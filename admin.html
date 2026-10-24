@@ -29,16 +29,18 @@
   .form-box { background:#1a1a2e; border:1px solid var(--border); padding:20px; border-radius:12px; margin-top:30px; display:none; }
   .form-group { margin-bottom:12px; }
   .form-group label { display:block; margin-bottom:5px; font-size:14px; }
-  .form-group input, .form-group textarea { width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; }
+  .form-group input[type="text"], .form-group textarea { width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; }
   .form-row { display:flex; gap:10px; }
   .form-row .form-group { flex:1; }
   
-  /* شريط التقدم */
   .progress-container { margin-top:15px; display:none; }
   progress { width:100%; height:20px; border-radius:10px; }
   progress::-webkit-progress-bar { background:#000; border-radius:10px; }
   progress::-webkit-progress-value { background:linear-gradient(90deg, #2563eb, #06b6d4); border-radius:10px; }
   #statusText { text-align:center; margin-top:10px; font-size:14px; color:#60a5fa; }
+
+  .checkbox-group { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:12px; }
+  .checkbox-group input[type="checkbox"] { width:18px; height:18px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -69,11 +71,11 @@
       
       <div class="form-row">
         <div class="form-group">
-          <label>اسم التطبيق</label>
+          <label>اسم التطبيق *</label>
           <input type="text" id="appName" required />
         </div>
         <div class="form-group">
-          <label>الإصدار (بدون v)</label>
+          <label>الإصدار (بدون v) *</label>
           <input type="text" id="appVersion" placeholder="1.0.0" required />
         </div>
       </div>
@@ -82,23 +84,44 @@
         <label>الوصف</label>
         <textarea id="appDesc" rows="2"></textarea>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>رابط أيقونة التطبيق (اختياري)</label>
+          <input type="text" id="appIcon" placeholder="مثال: tms.png أو https://..." />
+        </div>
+        <div class="form-group">
+          <label>نظام التشغيل</label>
+          <input type="text" id="appOS" value="Windows" placeholder="Windows / Android" />
+        </div>
+      </div>
       
       <div class="form-row">
         <div class="form-group">
-          <label>نظام التشغيل</label>
-          <input type="text" id="appOS" value="Windows" placeholder="Windows / Android / macOS" />
+          <label>التاجات (Tags) - مفصولة بفاصلة</label>
+          <input type="text" id="appTags" placeholder="إدارة, أفراد, Windows" />
         </div>
         <div class="form-group">
-          <label>التاجات (مفصولة بفاصلة)</label>
-          <input type="text" id="appTags" placeholder="إدارة, أفراد" />
+          <label>الهاشتاقات (Hashtags) - مفصولة بفاصلة</label>
+          <input type="text" id="appHashtags" placeholder="#TMS, #إدارة_الأفراد" />
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>الكلمات المفتاحية (Keywords) - مفصولة بفاصلة</label>
+        <input type="text" id="appKeywords" placeholder="TMS, HR software, employee management" />
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="appFeatured" checked />
+        <label for="appFeatured" style="margin:0; cursor:pointer;">تطبيق مميز (يظهر في مقدمة الموقع)</label>
       </div>
 
       <!-- حقل الملف الجديد -->
       <div class="form-group" style="margin-top:15px; background:rgba(37,99,235,0.1); padding:15px; border-radius:8px; border:1px dashed #2563eb;">
         <label style="color:#60a5fa; font-weight:bold;">📦 ملف البرنامج (سيتم رفعه كـ Release تلقائياً)</label>
         <input type="file" id="appFile" style="margin-top:10px; color:#fff; background:transparent; border:none;" />
-        <small style="color:#8a8ba0; display:block; margin-top:5px;">الحد الأقصى: 100 ميجابايت. إذا كان الملف كبيراً جداً، ارفعه يدوياً من GitHub واترك هذا الحقل فارغاً، وضع الرابط في الخانة أدناه.</small>
+        <small style="color:#8a8ba0; display:block; margin-top:5px;">الحد الأقصى: 100 ميجابايت.</small>
       </div>
 
       <div class="form-group">
