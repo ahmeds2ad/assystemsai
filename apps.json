@@ -5,18 +5,32 @@
       "version": "9.0.0",
       "description": "برنامج شامل لإدارة وتنظيم حركة الأفراد والعمليات اليومية بواجهة سهلة وسريعة.",
       "icon": "",
-      "tags": ["إدارة", "أفراد", "Windows"],
-      "hashtags": ["#TMS", "#إدارة_الأفراد", "#برامج_ذكية"],
+      "tags": [
+        "إدارة",
+        "أفراد",
+        "Windows"
+      ],
+      "hashtags": [
+        "#TMS",
+        "#إدارة_الأفراد",
+        "#برامج_ذكية"
+      ],
       "keywords": "TMS, HR software, employee management",
       "platforms": [
         {
           "os": "Windows",
           "url": "https://github.com/ahmeds2ad/as-site/releases/download/v9.0.0/TMS.Setup.9.0.0.zip",
-          "size": 78564377,
+          "size": 0,
           "filename": "TMS.Setup.9.0.0.zip"
+        },
+        {
+          "os": "Android",
+          "url": "https://ahmeds2ad.github.io/assystemsai/uploads/TMS Setup 10.2.3.apk",
+          "size": 5246220,
+          "filename": "TMS Setup 10.2.3.apk"
         }
       ],
-      "date": "2026-10-03",
+      "date": "2026-10-24",
       "featured": true,
       "releaseTag": "v9.0.0"
     }
