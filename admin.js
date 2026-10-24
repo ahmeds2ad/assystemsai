@@ -1,12 +1,13 @@
 const GITHUB_USER = 'ahmeds2ad';
-const GITHUB_REPO = 'assystemsai'; // ✅ تم تصحيح اسم المستودع هنا
-const GITHUB_BRANCH = 'main'; // تأكد من اسم الفرع (main أو master)
+const GITHUB_REPO = 'assystemsai';
+const GITHUB_BRANCH = 'main';
 const FILE_PATH = 'apps.json';
 
 let currentData = null;
 let currentSha = null;
 let githubToken = '';
 
+/* ================== الدخول ================== */
 async function login() {
   const token = document.getElementById('tokenInput').value.trim();
   if (!token) return;
@@ -27,6 +28,7 @@ async function login() {
   }
 }
 
+/* ================== جلب التطبيقات ================== */
 async function loadApps() {
   const listDiv = document.getElementById('appList');
   listDiv.innerHTML = 'جاري التحميل...';
@@ -47,6 +49,7 @@ async function loadApps() {
   }
 }
 
+/* ================== عرض القائمة ================== */
 function renderAppList() {
   const listDiv = document.getElementById('appList');
   if (!currentData.apps || currentData.apps.length === 0) {
@@ -69,6 +72,7 @@ function renderAppList() {
   `).join('');
 }
 
+/* ================== إظهار/إخفاء النموذج ================== */
 function showForm() {
   document.getElementById('appForm').style.display = 'block';
   document.getElementById('formTitle').innerText = 'إضافة تطبيق جديد';
@@ -95,6 +99,7 @@ function clearForm() {
   document.getElementById('appFile').value = '';
 }
 
+/* ================== تعديل تطبيق ================== */
 function editApp(index) {
   const app = currentData.apps[index];
   document.getElementById('appForm').style.display = 'block';
@@ -115,6 +120,20 @@ function editApp(index) {
   document.getElementById('appFile').value = '';
 }
 
+/* ================== تحويل الملف إلى Base64 ================== */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ================== حفظ التطبيق ================== */
 async function saveApp() {
   const index = parseInt(document.getElementById('appIndex').value);
   const name = document.getElementById('appName').value.trim();
@@ -147,25 +166,34 @@ async function saveApp() {
   let finalSize = 0;
   let finalFilename = manualUrl.split('/').pop() || '';
 
+  // ✅ التحقق من حجم الملف
   if (file) {
-    if (file.size > 100 * 1024 * 1024) {
-      alert('عذراً، حجم الملف يتجاوز 100 ميجابايت. يرجى رفعه يدوياً أو استخدام رابط مباشر.');
+    if (file.size > 25 * 1024 * 1024) {
+      // 🚀 الملف كبير: فتح واجهة GitHub الرسمية
+      const tagName = `v${version}-${Date.now()}`;
+      const releaseUrl = `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/releases/new?tag=${tagName}&title=${encodeURIComponent(name + ' v' + version)}&body=${encodeURIComponent(desc || 'تم الرفع من لوحة التحكم')}`;
+      
+      window.open(releaseUrl, '_blank');
+      
+      alert('⚠️ حجم الملف أكبر من 25 ميجابايت.\n\nتم فتح صفحة GitHub لإنشاء إصدار جديد.\n\nالرجاء اتباع الخطوات:\n1. اسحب الملف وارفعه في الصفحة التي فُتحت.\n2. بعد اكتمال الرفع، انسخ رابط التحميل.\n3. ارجع لهذه اللوحة، والصق الرابط في خانة "رابط تحميل جاهز".\n4. اضغط "حفظ ونشر" مرة أخرى (بدون اختيار ملف).');
+      
       saveBtn.disabled = false;
       saveBtn.innerText = '💾 حفظ ونشر';
       return;
-    }
-
-    try {
-      document.getElementById('progressContainer').style.display = 'block';
-      const uploadResult = await uploadFileToGitHub(file, version);
-      finalUrl = uploadResult.url;
-      finalSize = uploadResult.size;
-      finalFilename = uploadResult.name;
-    } catch (error) {
-      alert('حدث خطأ أثناء رفع الملف: ' + error.message);
-      saveBtn.disabled = false;
-      saveBtn.innerText = '💾 حفظ ونشر';
-      return;
+    } else {
+      // ✅ الملف صغير: رفع تلقائي عبر Contents API
+      try {
+        document.getElementById('progressContainer').style.display = 'block';
+        const uploadResult = await uploadFileToGitHub(file);
+        finalUrl = uploadResult.url;
+        finalSize = uploadResult.size;
+        finalFilename = uploadResult.name;
+      } catch (error) {
+        alert('حدث خطأ أثناء رفع الملف: ' + error.message);
+        saveBtn.disabled = false;
+        saveBtn.innerText = '💾 حفظ ونشر';
+        return;
+      }
     }
   }
 
@@ -176,6 +204,7 @@ async function saveApp() {
     return;
   }
 
+  // بناء كائن التطبيق
   const newApp = {
     name: name,
     version: version,
@@ -205,80 +234,83 @@ async function saveApp() {
   hideForm();
 }
 
-function uploadFileToGitHub(file, version) {
-  return new Promise(async (resolve, reject) => {
-    const progressBar = document.getElementById('uploadProgress');
-    const statusText = document.getElementById('statusText');
-    const tagName = `v${version}-${Date.now()}`;
+/* ================== رفع الملف (للملفات الصغيرة فقط) ================== */
+async function uploadFileToGitHub(file) {
+  const progressBar = document.getElementById('uploadProgress');
+  const statusText = document.getElementById('statusText');
+  
+  progressBar.value = 10;
+  statusText.innerText = 'جاري تحضير الملف...';
 
+  try {
+    const base64 = await fileToBase64(file);
+    progressBar.value = 30;
+    statusText.innerText = 'جاري رفع الملف إلى GitHub...';
+
+    const path = `uploads/${file.name}`;
+
+    // التحقق إذا كان الملف موجود مسبقاً للحصول على SHA
+    let sha = null;
     try {
-      statusText.innerText = 'جاري إنشاء إصدار جديد في GitHub...';
-      
-      const releaseRes = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases`, {
-        method: 'POST',
+      const checkRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
+        { headers: { 'Authorization': `Bearer ${githubToken}` } }
+      );
+      if (checkRes.ok) {
+        const existing = await checkRes.json();
+        sha = existing.sha;
+      }
+    } catch (e) {}
+
+    const body = {
+      message: `رفع ملف: ${file.name}`,
+      content: base64,
+      branch: GITHUB_BRANCH
+    };
+    if (sha) body.sha = sha;
+
+    progressBar.value = 50;
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`,
+      {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${githubToken}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          tag_name: tagName,
-          target_commitish: GITHUB_BRANCH,
-          name: `إصدار ${version}`,
-          body: 'تم الرفع تلقائياً من لوحة التحكم.',
-          draft: false,
-          prerelease: false
-        })
-      });
+        body: JSON.stringify(body)
+      }
+    );
 
-      if (!releaseRes.ok) throw new Error('فشل إنشاء الإصدار. تأكد من الصلاحيات.');
-      const releaseData = await releaseRes.json();
-      const releaseId = releaseData.id;
+    progressBar.value = 90;
 
-      statusText.innerText = 'جاري رفع الملف (قد يستغرق بعض الوقت)...';
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://uploads.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases/${releaseId}/assets?name=${encodeURIComponent(file.name)}`);
-      xhr.setRequestHeader('Authorization', `Bearer ${githubToken}`);
-      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          progressBar.value = percent;
-          statusText.innerText = `جاري الرفع: ${percent}% (${(event.loaded / 1048576).toFixed(1)} MB)`;
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status === 201) {
-          const uploadData = JSON.parse(xhr.responseText);
-          statusText.innerText = '✅ تم الرفع بنجاح!';
-          progressBar.value = 100;
-          resolve({
-            url: uploadData.browser_download_url,
-            size: uploadData.size,
-            name: uploadData.name
-          });
-        } else {
-          reject(new Error('فشل رفع الملف. رمز الخطأ: ' + xhr.status));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error('خطأ في الشبكة أثناء الرفع.'));
-      xhr.send(file);
-
-    } catch (err) {
-      reject(err);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('فشل الرفع: ' + errText);
     }
-  });
+
+    progressBar.value = 100;
+    statusText.innerText = '✅ تم الرفع بنجاح!';
+
+    return {
+      url: `https://ahmeds2ad.github.io/assystemsai/${path}`,
+      size: file.size,
+      name: file.name
+    };
+
+  } catch (err) {
+    throw err;
+  }
 }
 
+/* ================== حذف تطبيق ================== */
 async function deleteApp(index) {
   if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟ (لن يتم حذف الملف نفسه من GitHub، فقط من القائمة)')) return;
   currentData.apps.splice(index, 1);
   await pushToGitHub('حذف تطبيق');
 }
 
+/* ================== حفظ التغييرات في apps.json ================== */
 async function pushToGitHub(commitMessage) {
   try {
     const jsonString = JSON.stringify(currentData, null, 2);
@@ -310,6 +342,7 @@ async function pushToGitHub(commitMessage) {
   }
 }
 
+/* ================== التحقق من الجلسة عند التحميل ================== */
 window.onload = () => {
   const savedToken = sessionStorage.getItem('gh_token');
   if (savedToken) {
