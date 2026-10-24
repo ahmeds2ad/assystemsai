@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم - AS SYSTEMS</title>
+<style>
+  :root { --bg:#07070d; --surface:#12121d; --border:#2a2a3a; --accent:#2563eb; --text:#eef0f7; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Tajawal', sans-serif; }
+  body { background:var(--bg); color:var(--text); padding:20px; display:flex; justify-content:center; }
+  .container { width:100%; max-width:900px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:30px; margin-top:40px; }
+  h1 { text-align:center; margin-bottom:20px; color:#60a5fa; }
+  
+  #loginScreen { text-align:center; padding:40px 0; }
+  #loginScreen input { padding:12px; width:100%; max-width:400px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; margin-bottom:15px; }
+  .btn { background:var(--accent); color:#fff; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s; }
+  .btn:hover { background:#1d4ed8; }
+  .btn-danger { background:#dc2626; }
+  .btn-danger:hover { background:#b91c1c; }
+  .btn-sm { padding:6px 12px; font-size:13px; }
+
+  #dashboard { display:none; }
+  .app-list { margin-top:20px; display:flex; flex-direction:column; gap:15px; }
+  .app-item { background:#1a1a2e; border:1px solid var(--border); padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .app-info h3 { margin-bottom:5px; }
+  .app-info p { font-size:13px; color:#8a8ba0; }
+  .app-actions { display:flex; gap:8px; }
+  
+  .form-box { background:#1a1a2e; border:1px solid var(--border); padding:20px; border-radius:12px; margin-top:30px; display:none; }
+  .form-group { margin-bottom:12px; }
+  .form-group label { display:block; margin-bottom:5px; font-size:14px; }
+  .form-group input, .form-group textarea { width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; }
+  .form-row { display:flex; gap:10px; }
+  .form-row .form-group { flex:1; }
+  
+  /* شريط التقدم */
+  .progress-container { margin-top:15px; display:none; }
+  progress { width:100%; height:20px; border-radius:10px; }
+  progress::-webkit-progress-bar { background:#000; border-radius:10px; }
+  progress::-webkit-progress-value { background:linear-gradient(90deg, #2563eb, #06b6d4); border-radius:10px; }
+  #statusText { text-align:center; margin-top:10px; font-size:14px; color:#60a5fa; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔐 لوحة تحكم AS SYSTEMS</h1>
+
+  <div id="loginScreen">
+    <p style="margin-bottom:15px; color:#8a8ba0;">أدخل مفتاح الأمان (GitHub Token) للدخول</p>
+    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxx" />
+    <br>
+    <button class="btn" onclick="login()">دخول</button>
+    <p id="loginError" style="color:#ef4444; margin-top:10px; display:none;">❌ المفتاح غير صحيح أو لا يملك صلاحيات.</p>
+  </div>
+
+  <div id="dashboard">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2>التطبيقات الحالية</h2>
+      <button class="btn" onclick="showForm()">+ إضافة تطبيق جديد</button>
+    </div>
+    
+    <div id="appList" class="app-list"></div>
+
+    <!-- نموذج الإضافة/التعديل -->
+    <div id="appForm" class="form-box">
+      <h3 id="formTitle" style="margin-bottom:15px;">إضافة تطبيق جديد</h3>
+      <input type="hidden" id="appIndex" />
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>اسم التطبيق</label>
+          <input type="text" id="appName" required />
+        </div>
+        <div class="form-group">
+          <label>الإصدار (بدون v)</label>
+          <input type="text" id="appVersion" placeholder="1.0.0" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>الوصف</label>
+        <textarea id="appDesc" rows="2"></textarea>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>نظام التشغيل</label>
+          <input type="text" id="appOS" value="Windows" placeholder="Windows / Android / macOS" />
+        </div>
+        <div class="form-group">
+          <label>التاجات (مفصولة بفاصلة)</label>
+          <input type="text" id="appTags" placeholder="إدارة, أفراد" />
+        </div>
+      </div>
+
+      <!-- حقل الملف الجديد -->
+      <div class="form-group" style="margin-top:15px; background:rgba(37,99,235,0.1); padding:15px; border-radius:8px; border:1px dashed #2563eb;">
+        <label style="color:#60a5fa; font-weight:bold;">📦 ملف البرنامج (سيتم رفعه كـ Release تلقائياً)</label>
+        <input type="file" id="appFile" style="margin-top:10px; color:#fff; background:transparent; border:none;" />
+        <small style="color:#8a8ba0; display:block; margin-top:5px;">الحد الأقصى: 100 ميجابايت. إذا كان الملف كبيراً جداً، ارفعه يدوياً من GitHub واترك هذا الحقل فارغاً، وضع الرابط في الخانة أدناه.</small>
+      </div>
+
+      <div class="form-group">
+        <label>أو ضع رابط تحميل جاهز (اختياري)</label>
+        <input type="text" id="appUrl" placeholder="https://github.com/.../TMS.zip" />
+      </div>
+
+      <div class="progress-container" id="progressContainer">
+        <progress id="uploadProgress" value="0" max="100"></progress>
+        <div id="statusText">جاري التحضير...</div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn" id="saveBtn" onclick="saveApp()">💾 حفظ ونشر</button>
+        <button class="btn" style="background:#4b5563;" onclick="hideForm()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
