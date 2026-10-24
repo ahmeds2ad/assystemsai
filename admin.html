@@ -41,6 +41,10 @@
 
   .checkbox-group { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:12px; }
   .checkbox-group input[type="checkbox"] { width:18px; height:18px; cursor:pointer; }
+
+  .platform-badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; margin-left:5px; font-weight:600; }
+  .badge-win { background:rgba(37,99,235,0.2); color:#93c5fd; }
+  .badge-and { background:rgba(16,185,129,0.2); color:#34d399; }
 </style>
 </head>
 <body>
@@ -91,25 +95,19 @@
           <input type="text" id="appIcon" placeholder="مثال: tms.png أو https://..." />
         </div>
         <div class="form-group">
-          <label>نظام التشغيل</label>
-          <input type="text" id="appOS" value="Windows" placeholder="Windows / Android" />
+          <label>التاجات (Tags) - مفصولة بفاصلة</label>
+          <input type="text" id="appTags" placeholder="إدارة, أفراد" />
         </div>
       </div>
       
-      <div class="form-row">
-        <div class="form-group">
-          <label>التاجات (Tags) - مفصولة بفاصلة</label>
-          <input type="text" id="appTags" placeholder="إدارة, أفراد, Windows" />
-        </div>
-        <div class="form-group">
-          <label>الهاشتاقات (Hashtags) - مفصولة بفاصلة</label>
-          <input type="text" id="appHashtags" placeholder="#TMS, #إدارة_الأفراد" />
-        </div>
+      <div class="form-group">
+        <label>الهاشتاقات (Hashtags) - مفصولة بفاصلة</label>
+        <input type="text" id="appHashtags" placeholder="#TMS, #إدارة_الأفراد" />
       </div>
 
       <div class="form-group">
         <label>الكلمات المفتاحية (Keywords) - مفصولة بفاصلة</label>
-        <input type="text" id="appKeywords" placeholder="TMS, HR software, employee management" />
+        <input type="text" id="appKeywords" placeholder="TMS, HR software" />
       </div>
 
       <div class="checkbox-group">
@@ -117,16 +115,26 @@
         <label for="appFeatured" style="margin:0; cursor:pointer;">تطبيق مميز (يظهر في مقدمة الموقع)</label>
       </div>
 
-      <!-- حقل الملف الجديد -->
+      <!-- ========== قسم Windows ========== -->
       <div class="form-group" style="margin-top:15px; background:rgba(37,99,235,0.1); padding:15px; border-radius:8px; border:1px dashed #2563eb;">
-        <label style="color:#60a5fa; font-weight:bold;">📦 ملف البرنامج (سيتم رفعه كـ Release تلقائياً)</label>
+        <label style="color:#60a5fa; font-weight:bold;">💻 ملف نسخة Windows (اختياري)</label>
         <input type="file" id="appFile" style="margin-top:10px; color:#fff; background:transparent; border:none;" />
-        <small style="color:#8a8ba0; display:block; margin-top:5px;">الحد الأقصى: 100 ميجابايت.</small>
+        <small style="color:#8a8ba0; display:block; margin-top:5px;">إذا كان الملف أكبر من 25 ميجا، سيُفتح GitHub لرفعه.</small>
+        <div class="form-group" style="margin-top:10px;">
+          <label>أو ضع رابط تحميل Windows جاهز</label>
+          <input type="text" id="appUrl" placeholder="https://github.com/.../TMS.zip" />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>أو ضع رابط تحميل جاهز (اختياري)</label>
-        <input type="text" id="appUrl" placeholder="https://github.com/.../TMS.zip" />
+      <!-- ========== قسم Android ========== -->
+      <div class="form-group" style="margin-top:15px; background:rgba(16,185,129,0.1); padding:15px; border-radius:8px; border:1px dashed #10b981;">
+        <label style="color:#34d399; font-weight:bold;">📱 ملف نسخة Android (اختياري)</label>
+        <input type="file" id="appFileAndroid" accept=".apk,.zip" style="margin-top:10px; color:#fff; background:transparent; border:none;" />
+        <small style="color:#8a8ba0; display:block; margin-top:5px;">إذا كان الملف أكبر من 25 ميجا، سيُفتح GitHub لرفعه.</small>
+        <div class="form-group" style="margin-top:10px;">
+          <label>أو ضع رابط تحميل Android جاهز</label>
+          <input type="text" id="appUrlAndroid" placeholder="https://github.com/.../app.apk" />
+        </div>
       </div>
 
       <div class="progress-container" id="progressContainer">

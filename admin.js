@@ -57,19 +57,27 @@ function renderAppList() {
     return;
   }
 
-  listDiv.innerHTML = currentData.apps.map((app, index) => `
+  listDiv.innerHTML = currentData.apps.map((app, index) => {
+    const platforms = (app.platforms || []).map(p => {
+      const cls = p.os === 'Android' ? 'badge-and' : 'badge-win';
+      const icon = p.os === 'Android' ? '📱' : '💻';
+      return `<span class="platform-badge ${cls}">${icon} ${p.os}</span>`;
+    }).join('');
+
+    return `
     <div class="app-item">
       <div class="app-info">
         <h3>${app.name} <span style="font-size:12px; color:#60a5fa;">v${app.version}</span> ${app.featured ? '⭐' : ''}</h3>
         <p>${app.description || 'لا يوجد وصف'}</p>
-        <p style="font-size:11px; margin-top:5px;">الملف: ${app.platforms[0]?.filename || 'غير محدد'}</p>
+        <p style="font-size:11px; margin-top:5px;">${platforms || 'لا توجد منصات'}</p>
       </div>
       <div class="app-actions">
         <button class="btn btn-sm" style="background:#f59e0b;" onclick="editApp(${index})">تعديل</button>
         <button class="btn btn-danger btn-sm" onclick="deleteApp(${index})">حذف</button>
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 /* ================== إظهار/إخفاء النموذج ================== */
@@ -90,13 +98,14 @@ function clearForm() {
   document.getElementById('appVersion').value = '';
   document.getElementById('appDesc').value = '';
   document.getElementById('appIcon').value = '';
-  document.getElementById('appOS').value = 'Windows';
   document.getElementById('appTags').value = '';
   document.getElementById('appHashtags').value = '';
   document.getElementById('appKeywords').value = '';
   document.getElementById('appFeatured').checked = true;
   document.getElementById('appUrl').value = '';
   document.getElementById('appFile').value = '';
+  document.getElementById('appUrlAndroid').value = '';
+  document.getElementById('appFileAndroid').value = '';
 }
 
 /* ================== تعديل تطبيق ================== */
@@ -111,13 +120,20 @@ function editApp(index) {
   document.getElementById('appVersion').value = app.version;
   document.getElementById('appDesc').value = app.description || '';
   document.getElementById('appIcon').value = app.icon || '';
-  document.getElementById('appOS').value = app.platforms[0]?.os || 'Windows';
   document.getElementById('appTags').value = (app.tags || []).join(', ');
   document.getElementById('appHashtags').value = (app.hashtags || []).join(', ');
   document.getElementById('appKeywords').value = app.keywords || '';
   document.getElementById('appFeatured').checked = app.featured || false;
-  document.getElementById('appUrl').value = app.platforms[0]?.url || '';
+
+  // منصة Windows
+  const winPlatform = (app.platforms || []).find(p => p.os === 'Windows');
+  document.getElementById('appUrl').value = winPlatform?.url || '';
   document.getElementById('appFile').value = '';
+
+  // منصة Android
+  const androidPlatform = (app.platforms || []).find(p => p.os === 'Android');
+  document.getElementById('appUrlAndroid').value = androidPlatform?.url || '';
+  document.getElementById('appFileAndroid').value = '';
 }
 
 /* ================== تحويل الملف إلى Base64 ================== */
@@ -133,6 +149,16 @@ function fileToBase64(file) {
   });
 }
 
+/* ================== فتح GitHub Release للملفات الكبيرة ================== */
+function openGitHubReleaseForUpload(name, version, desc, platformType) {
+  const tagName = `v${version}-${Date.now()}`;
+  const releaseUrl = `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/releases/new?tag=${tagName}&title=${encodeURIComponent(name + ' v' + version + ' - ' + platformType)}&body=${encodeURIComponent(desc || 'تم الرفع من لوحة التحكم')}`;
+  
+  window.open(releaseUrl, '_blank');
+  
+  alert(`⚠️ حجم الملف (${platformType}) أكبر من 25 ميجابايت.\n\nتم فتح صفحة GitHub لإنشاء إصدار جديد.\n\nالرجاء:\n1. ارفع الملف في الصفحة التي فُتحت.\n2. انسخ رابط التحميل.\n3. ارجع للوحة، والصق الرابط في خانة "رابط تحميل ${platformType} جاهز".\n4. اضغط "حفظ ونشر" مرة أخرى.`);
+}
+
 /* ================== حفظ التطبيق ================== */
 async function saveApp() {
   const index = parseInt(document.getElementById('appIndex').value);
@@ -140,7 +166,6 @@ async function saveApp() {
   const version = document.getElementById('appVersion').value.trim();
   const desc = document.getElementById('appDesc').value.trim();
   const icon = document.getElementById('appIcon').value.trim();
-  const os = document.getElementById('appOS').value.trim();
   const tags = document.getElementById('appTags').value.split(',').map(t => t.trim()).filter(Boolean);
   
   const rawHashtags = document.getElementById('appHashtags').value.split(',').map(h => h.trim()).filter(Boolean);
@@ -148,10 +173,6 @@ async function saveApp() {
   
   const keywords = document.getElementById('appKeywords').value.split(',').map(k => k.trim()).filter(Boolean).join(', ');
   const featured = document.getElementById('appFeatured').checked;
-  
-  const manualUrl = document.getElementById('appUrl').value.trim();
-  const fileInput = document.getElementById('appFile');
-  const file = fileInput.files[0];
 
   if (!name || !version) {
     alert('الرجاء إدخال اسم التطبيق والإصدار على الأقل.');
@@ -162,49 +183,87 @@ async function saveApp() {
   saveBtn.disabled = true;
   saveBtn.innerText = 'جاري المعالجة...';
 
-  let finalUrl = manualUrl;
-  let finalSize = 0;
-  let finalFilename = manualUrl.split('/').pop() || '';
+  const platforms = [];
 
-  // ✅ التحقق من حجم الملف
+  /* ---------- معالجة Windows ---------- */
+  const manualUrl = document.getElementById('appUrl').value.trim();
+  const fileInput = document.getElementById('appFile');
+  const file = fileInput.files[0];
+
+  let winUrl = manualUrl;
+  let winSize = 0;
+  let winFilename = manualUrl.split('/').pop() || '';
+
   if (file) {
     if (file.size > 25 * 1024 * 1024) {
-      // 🚀 الملف كبير: فتح واجهة GitHub الرسمية
-      const tagName = `v${version}-${Date.now()}`;
-      const releaseUrl = `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/releases/new?tag=${tagName}&title=${encodeURIComponent(name + ' v' + version)}&body=${encodeURIComponent(desc || 'تم الرفع من لوحة التحكم')}`;
-      
-      window.open(releaseUrl, '_blank');
-      
-      alert('⚠️ حجم الملف أكبر من 25 ميجابايت.\n\nتم فتح صفحة GitHub لإنشاء إصدار جديد.\n\nالرجاء اتباع الخطوات:\n1. اسحب الملف وارفعه في الصفحة التي فُتحت.\n2. بعد اكتمال الرفع، انسخ رابط التحميل.\n3. ارجع لهذه اللوحة، والصق الرابط في خانة "رابط تحميل جاهز".\n4. اضغط "حفظ ونشر" مرة أخرى (بدون اختيار ملف).');
-      
+      openGitHubReleaseForUpload(name, version, desc, 'Windows');
       saveBtn.disabled = false;
       saveBtn.innerText = '💾 حفظ ونشر';
       return;
-    } else {
-      // ✅ الملف صغير: رفع تلقائي عبر Contents API
-      try {
-        document.getElementById('progressContainer').style.display = 'block';
-        const uploadResult = await uploadFileToGitHub(file);
-        finalUrl = uploadResult.url;
-        finalSize = uploadResult.size;
-        finalFilename = uploadResult.name;
-      } catch (error) {
-        alert('حدث خطأ أثناء رفع الملف: ' + error.message);
-        saveBtn.disabled = false;
-        saveBtn.innerText = '💾 حفظ ونشر';
-        return;
-      }
+    }
+    try {
+      document.getElementById('progressContainer').style.display = 'block';
+      document.getElementById('statusText').innerText = 'جاري رفع ملف Windows...';
+      const r = await uploadFileToGitHub(file);
+      winUrl = r.url;
+      winSize = r.size;
+      winFilename = r.name;
+    } catch (e) {
+      alert('حدث خطأ أثناء رفع ملف Windows: ' + e.message);
+      saveBtn.disabled = false;
+      saveBtn.innerText = '💾 حفظ ونشر';
+      return;
     }
   }
 
-  if (!finalUrl) {
-    alert('يجب عليك اختيار ملف للرفع أو وضع رابط تحميل جاهز.');
+  if (winUrl) {
+    platforms.push({ os: 'Windows', url: winUrl, size: winSize, filename: winFilename });
+  }
+
+  /* ---------- معالجة Android ---------- */
+  const manualUrlAndroid = document.getElementById('appUrlAndroid').value.trim();
+  const fileAndroidInput = document.getElementById('appFileAndroid');
+  const fileAndroid = fileAndroidInput.files[0];
+
+  let androidUrl = manualUrlAndroid;
+  let androidSize = 0;
+  let androidFilename = manualUrlAndroid.split('/').pop() || '';
+
+  if (fileAndroid) {
+    if (fileAndroid.size > 25 * 1024 * 1024) {
+      openGitHubReleaseForUpload(name, version, desc, 'Android');
+      saveBtn.disabled = false;
+      saveBtn.innerText = '💾 حفظ ونشر';
+      return;
+    }
+    try {
+      document.getElementById('progressContainer').style.display = 'block';
+      document.getElementById('statusText').innerText = 'جاري رفع ملف Android...';
+      const r = await uploadFileToGitHub(fileAndroid);
+      androidUrl = r.url;
+      androidSize = r.size;
+      androidFilename = r.name;
+    } catch (e) {
+      alert('حدث خطأ أثناء رفع ملف Android: ' + e.message);
+      saveBtn.disabled = false;
+      saveBtn.innerText = '💾 حفظ ونشر';
+      return;
+    }
+  }
+
+  if (androidUrl) {
+    platforms.push({ os: 'Android', url: androidUrl, size: androidSize, filename: androidFilename });
+  }
+
+  /* ---------- التحقق ---------- */
+  if (platforms.length === 0) {
+    alert('يجب عليك إضافة منصة واحدة على الأقل (Windows أو Android).');
     saveBtn.disabled = false;
     saveBtn.innerText = '💾 حفظ ونشر';
     return;
   }
 
-  // بناء كائن التطبيق
+  /* ---------- بناء كائن التطبيق ---------- */
   const newApp = {
     name: name,
     version: version,
@@ -213,9 +272,7 @@ async function saveApp() {
     tags: tags,
     hashtags: hashtags,
     keywords: keywords,
-    platforms: [
-      { os: os, url: finalUrl, size: finalSize, filename: finalFilename }
-    ],
+    platforms: platforms,
     date: new Date().toISOString().split('T')[0],
     featured: featured,
     releaseTag: "v" + version
@@ -305,7 +362,7 @@ async function uploadFileToGitHub(file) {
 
 /* ================== حذف تطبيق ================== */
 async function deleteApp(index) {
-  if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟ (لن يتم حذف الملف نفسه من GitHub، فقط من القائمة)')) return;
+  if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟ (لن يتم حذف الملفات نفسها من GitHub، فقط من القائمة)')) return;
   currentData.apps.splice(index, 1);
   await pushToGitHub('حذف تطبيق');
 }
